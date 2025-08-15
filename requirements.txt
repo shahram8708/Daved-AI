@@ -12,3 +12,4 @@ SQLAlchemy
 Werkzeug
 WTForms
 gunicorn
+email-validator
