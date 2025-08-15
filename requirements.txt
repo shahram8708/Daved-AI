@@ -13,3 +13,4 @@ Werkzeug
 WTForms
 gunicorn
 email-validator
+google.generativeai
