@@ -1,0 +1,14 @@
+APScheduler
+Flask
+Flask_Caching
+Flask_Login
+Flask_Migrate
+flask_sqlalchemy
+flask_wtf
+prometheus_client
+protobuf
+python-dotenv
+SQLAlchemy
+Werkzeug
+WTForms
+gunicorn

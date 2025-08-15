@@ -1,0 +1,44 @@
+
+<div class="theme-toggle">
+    <button class="btn btn-primary btn-sm rounded-circle shadow" id="theme-toggle-btn">
+        <i class="bi" id="theme-icon"></i>
+    </button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('theme-toggle-btn');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlEl = document.documentElement;
+        
+        
+        function setThemeIcon() {
+            const currentTheme = htmlEl.getAttribute('data-bs-theme') || 'light';
+            themeIcon.className = currentTheme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+        }
+        
+        setThemeIcon();
+        
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = htmlEl.getAttribute('data-bs-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            
+            htmlEl.setAttribute('data-bs-theme', newTheme);
+            setThemeIcon();
+            
+            
+            if ({{ 'true' if current_user.is_authenticated else 'false' }}) {
+                fetch("{{ url_for('main.update_theme') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ theme: newTheme })
+                });
+            }
+        });
+    });
+</script>

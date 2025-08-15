@@ -1,0 +1,433 @@
+
+{% extends "base.html" %}
+
+{% block title %}Code Generator · Daved AI{% endblock %}
+
+{% block content %}
+
+<svg aria-hidden="true" class="d-none">
+  <defs>
+    
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    
+    <symbol id="i-magic" viewBox="0 0 24 24">
+      <path d="M3 21l10-10M14 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24">
+      <path d="M14 3c3 0 7 4 7 7 0 6-7 11-7 11s-5-7-11-7c0-3 4-7 7-7 0-3 2-4 4-4z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor"/>
+      <path d="M6 18l-3 3 4-1 2-2" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-prompt" viewBox="0 0 24 24">
+      <path d="M4 5h16v14H4z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M7 9l3 3-3 3M11 15h6" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-hourglass" viewBox="0 0 24 24">
+      <path d="M6 2h12v5l-4 4 4 4v5H6v-5l4-4-4-4z" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 3v12M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="M4 21h16" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24">
+      <path d="M3 12h4l2-6 4 12 2-6h6" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<style>
+  
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+  :root{
+    --bg:#0b0f1a;
+    --bg-soft:#0f1526;
+    --card:#121a2d;
+    --line:#1b2540;
+    --text:#d7e3ff;
+    --muted:#9bb0d8;
+    --primary:#7c4dff;
+    --cyan:#24e1ff;
+    --grad-1:#6a00ff;
+    --grad-2:#00e1ff;
+    --grad-3:#8a2be2;
+  }
+
+  body{ background: radial-gradient(1200px 600px at 10% -10%, #1a2341 0%, transparent 60%), var(--bg); color: var(--text); font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; }
+
+  
+  .tech-grid::before{
+    content:""; position:absolute; inset:0; background:
+      linear-gradient(transparent 95%, rgba(255,255,255,.04) 95%) 0 0/100% 2px,
+      linear-gradient(90deg, transparent 95%, rgba(255,255,255,.04) 95%) 0 0/2px 100%;
+    pointer-events:none; mix-blend:overlay;
+  }
+  .scanline::after{
+    content:""; position:absolute; inset:0; background: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0) 80%);
+    opacity:.2; animation: scan 6s linear infinite; pointer-events: none;
+  }
+  @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+
+  
+  .neon{ background: linear-gradient(135deg, var(--grad-1), var(--grad-2), var(--grad-3)); background-size:200% 200%; animation: gradientMove 10s ease infinite; }
+  @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  
+  .badge-chip{ display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem; border-radius:999px; background: rgba(124,77,255,.12); border:1px solid rgba(124,77,255,.25); color:var(--muted); font-weight:600; font-size:.9rem; }
+  .btn-neon{
+    --bs-btn-bg: transparent; --bs-btn-border-color: rgba(124,77,255,.5); --bs-btn-color:#fff;
+    border:1px solid var(--bs-btn-border-color); backdrop-filter: blur(6px);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 0 20px rgba(124,77,255,.25);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .btn-neon:hover{ transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 8px 30px rgba(36,225,255,.25); }
+  .btn-solid{ background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); border:0; color:#fff; box-shadow: 0 6px 30px rgba(124,77,255,.35); }
+  .btn-solid:hover{ filter: brightness(1.08); transform: translateY(-2px); }
+
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
+    border: 1px solid rgba(255,255,255,.06); border-radius: 16px;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; position:relative; overflow:hidden;
+  }
+  .panel:hover{ transform: translateY(-4px); box-shadow: 0 16px 60px rgba(0,0,0,.35), 0 0 60px rgba(124,77,255,.15); border-color: rgba(124,77,255,.35); }
+  .panel-header{ border-bottom:1px solid rgba(255,255,255,.06); background:#0b1224; padding:.9rem 1rem; }
+  .panel-title{ margin:0; display:flex; align-items:center; gap:.6rem; font-weight:700; }
+  .ico{
+    width:40px; height:40px; display:grid; place-items:center; border-radius:12px; color:#fff;
+    background: radial-gradient(circle at 30% 30%, rgba(36,225,255,.25), rgba(124,77,255,.45));
+    box-shadow: 0 10px 30px rgba(124,77,255,.35) inset; filter:url(#glow);
+  }
+
+  
+  .form-label{ font-weight:600; }
+  .form-control, textarea.form-control{
+    background:#0e162b; border:1px solid rgba(255,255,255,.08); color:var(--text);
+    border-radius:12px; padding:0.8rem 1rem;
+  }
+  .form-control:focus{
+    border-color: rgba(36,225,255,.6); box-shadow: 0 0 0 .25rem rgba(36,225,255,.15);
+    background:#0f182f; color:#fff;
+  }
+  .form-text{ color:var(--muted); }
+
+  
+  .reveal{ opacity:0; transform: translateY(18px) scale(.98); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in-view{ opacity:1; transform: none; }
+
+  
+  #progress-container{ max-height: 360px; overflow:auto; padding-right:.25rem; }
+  .timeline{ position:relative; margin:0; padding:0; list-style:none; }
+  .timeline::before{ content:""; position:absolute; left:18px; top:0; bottom:0; width:2px; background: linear-gradient(180deg, rgba(124,77,255,.5), rgba(36,225,255,.5)); }
+  .timeline-item{
+    position:relative; padding-left:52px; padding-right:8px; margin-bottom:14px;
+    background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:12px;
+  }
+  .timeline-dot{
+    position:absolute; left:10px; top:14px; width:16px; height:16px; border-radius:50%;
+    background: #0e162b; border:2px solid rgba(124,77,255,.8); display:grid; place-items:center;
+  }
+  .timeline-status{ display:flex; align-items:center; gap:.5rem; font-weight:600; }
+  .timeline-meta{ color: var(--muted); font-size:.9rem; }
+  .status-pending  .timeline-dot{ border-color: rgba(255,255,255,.35); }
+  .status-running  .timeline-dot{ border-color: #ffc107; }
+  .status-completed .timeline-dot{ border-color: #2ecc71; }
+  .status-failed    .timeline-dot{ border-color: #ff6b6b; }
+
+  
+  .tilt{ will-change: transform; }
+
+  
+  @media (max-width: 575.98px){ .page-title{ font-size:1.6rem; } }
+</style>
+
+
+<section class="position-relative py-4 tech-grid scanline">
+  <div class="container position-relative">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="reveal">
+        <span class="badge-chip mb-2">
+          <svg class="me-1" width="18" height="18"><use href="#i-magic"></use></svg>
+          Daved AI · Code Generator
+        </span>
+        <h1 class="page-title fw-800 mb-0">Turn one prompt into a complete project.</h1>
+        <p class="text-secondary mb-0" style="color:var(--muted)">Describe your idea. Daved AI plans it, builds it, and delivers a ready-to-run ZIP.</p>
+      </div>
+      <div class="d-flex gap-2 reveal">
+        <a href="{{ url_for('main.projects') }}" class="btn btn-neon rounded-pill px-3">
+          <svg class="me-2" width="18" height="18"><use href="#i-activity"></use></svg> View Activity
+        </a>
+        <a href="{{ url_for('main.projects') }}" class="btn btn-solid rounded-pill px-3">
+          <svg class="me-2" width="18" height="18"><use href="#i-download"></use></svg> My Projects
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="py-3 py-md-4">
+  <div class="container">
+    <div class="row g-4">
+      
+      <div class="col-lg-7">
+        <div class="panel reveal tilt">
+          <div class="panel-header">
+            <h5 class="panel-title">
+              <span class="ico"><svg width="22" height="22"><use href="#i-prompt"></use></svg></span>
+              Generate Code
+            </h5>
+          </div>
+          <div class="p-3 p-md-4">
+            
+            <form id="codegen-form" novalidate>
+              <div class="mb-3">
+                <label for="prompt" class="form-label">Enter your code generation request</label>
+                <textarea class="form-control" id="prompt" rows="5" placeholder="e.g., 'Create a Flask app with auth, PostgreSQL, and Dockerfile'"></textarea>
+                <div class="form-text">Be as specific as possible for best results.</div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-solid" id="generate-btn">
+                  <svg class="me-2" width="18" height="18"><use href="#i-magic"></use></svg>
+                  Generate Code
+                </button>
+                <button type="button" class="btn btn-neon" id="clear-btn">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-lg-5">
+        <div class="panel reveal tilt">
+          <div class="panel-header">
+            <h5 class="panel-title">
+              <span class="ico"><svg width="22" height="22"><use href="#i-rocket"></use></svg></span>
+              Prompt Tips
+            </h5>
+          </div>
+          <div class="p-3 p-md-4">
+            <ul class="mb-0">
+              <li class="mb-2"><strong>Mention core features:</strong> auth, roles, billing, payments, dashboards.</li>
+              <li class="mb-2"><strong>Specify tech:</strong> framework, DB, queue, cloud provider, CI/CD.</li>
+              <li class="mb-2"><strong>Define deliverables:</strong> docs, env templates, Dockerfile, seed data.</li>
+              <li class="mb-0"><strong>Provide constraints:</strong> “Stripe only”, “Postgres 16”, “no ORM”, “mobile-first”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="my-4 my-md-5" style="height:2px; background: linear-gradient(90deg, rgba(124,77,255,.6), rgba(36,225,255,.6)); opacity:.6;"></div>
+
+    
+    <div id="progress-section" class="d-none">
+      <div class="panel reveal tilt mb-4">
+        <div class="panel-header">
+          <h5 class="panel-title">
+            <span class="ico"><svg width="22" height="22"><use href="#i-activity"></use></svg></span>
+            Generation Steps
+          </h5>
+        </div>
+        <div class="p-3 p-md-4">
+          <div id="progress-container">
+            
+            <ul class="timeline" id="progress-list"></ul>
+          </div>
+
+          
+          <div id="download-section" class="mt-4 text-center d-none">
+            <a id="download-btn" class="btn btn-solid btn-lg rounded-pill">
+              <svg class="me-2" width="20" height="20"><use href="#i-download"></use></svg>
+              Download Project
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  
+  function tilt(el){
+    let rect = null;
+    function onMove(e){
+      if(!rect) rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      el.style.transform = `perspective(800px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*5).toFixed(2)}deg) translateY(-4px)`;
+    }
+    function reset(){ el.style.transform = ""; rect = null; }
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', reset);
+  }
+  document.querySelectorAll('.tilt').forEach(tilt);
+
+  
+  (function($){
+    const hasjQ = typeof $ === 'function';
+    if(!hasjQ) return;  
+
+    const svg = {
+      pending:  '<svg width="16" height="16"><use href="#i-hourglass"></use></svg>',
+      running:  '<svg width="16" height="16"><use href="#i-hourglass"></use></svg>',
+      completed:'<svg width="16" height="16"><use href="#i-check"></use></svg>',
+      failed:   '<svg width="16" height="16"><use href="#i-x"></use></svg>'
+    };
+
+    function classFor(status){
+      if(status === 'completed') return 'status-completed';
+      if(status === 'failed') return 'status-failed';
+      if(status === 'in-progress' || status === 'running') return 'status-running';
+      return 'status-pending';
+    }
+
+    function iconFor(status){
+      if(status === 'completed') return svg.completed;
+      if(status === 'failed') return svg.failed;
+      if(status === 'in-progress' || status === 'running') return svg.running;
+      return svg.pending;
+    }
+
+    function renderStep(step){
+      const st = step.status || 'pending';
+      return `
+        <li class="timeline-item ${classFor(st)}" id="step-${step.id}">
+          <div class="timeline-dot">${iconFor(st)}</div>
+          <div class="p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="timeline-status">
+                <strong>Step ${step.step_number}:</strong>
+                <span>${step.title || ''}</span>
+              </div>
+              <span class="timeline-meta">${(step.started_at || '')}</span>
+            </div>
+            ${step.message ? `<div class="small mt-1" style="color:var(--muted)">${step.message}</div>` : ''}
+          </div>
+        </li>`;
+    }
+
+    function upsertStep(step){
+      const $row = $('#step-' + step.id);
+      if(!$row.length){
+        $('#progress-list').append(renderStep(step));
+        return;
+      }
+      $row
+        .removeClass('status-pending status-running status-completed status-failed')
+        .addClass(classFor(step.status));
+      $row.find('.timeline-dot').html(iconFor(step.status));
+    }
+
+    $(document).ready(function(){
+      const csrfToken = $('meta[name="csrf-token"]').attr('content');
+      let projectId = null;
+      let pollTimer = null;
+
+      function updateUIWithStatus(data){
+        if(Array.isArray(data.steps)) data.steps.forEach(upsertStep);
+
+        
+        if(data.status === 'completed' && data.zip_url){
+          $('#download-btn').attr('href', data.zip_url);
+          $('#download-section').removeClass('d-none');
+          if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+        }
+      }
+
+      function pollStatus(){
+        if(!projectId) return;
+        const url = '{{ url_for("codegen.generate_status", project_id=0) }}'.replace('0', projectId);
+        $.get(url, function(data){
+          updateUIWithStatus(data);
+          const c = $('#progress-container');
+          c.scrollTop(c[0].scrollHeight);
+        });
+      }
+
+      function startPolling(){
+        if(pollTimer) return;
+        pollTimer = setInterval(pollStatus, 1500); 
+      }
+
+      
+      $('#clear-btn').on('click', function(){ $('#prompt').val(''); });
+
+      
+      $('#codegen-form').on('submit', function(e){
+        e.preventDefault();
+        const prompt = $('#prompt').val().trim();
+        if(!prompt) return;
+
+        
+        $('#progress-section').removeClass('d-none');
+        $('#download-section').addClass('d-none');
+        $('#progress-list').empty();
+
+        
+        $('#generate-btn').prop('disabled', true).html(
+          '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...'
+        );
+
+        
+        $.ajax({
+          url: "{{ url_for('codegen.generate_code') }}",
+          method: 'POST',
+          contentType: 'application/json',
+          headers: { 'X-CSRFToken': csrfToken },
+          data: JSON.stringify({
+            prompt: prompt,
+            preferred_stack: $('#stack').val(),
+            complexity: $('#complexity').val()
+          }),
+          success: function (response){
+            if(response && response.success){
+              projectId = response.project_id;
+
+              
+              if(Array.isArray(response.steps)){
+                response.steps.forEach(step => $('#progress-list').append(renderStep(step)));
+              }
+
+              startPolling();
+            } else {
+              alert('Error: ' + ((response && response.message) ? response.message : 'Unknown error'));
+            }
+          },
+          error: function(){ alert('Error connecting to server'); }
+        }).always(function(){
+          $('#generate-btn').prop('disabled', false).html(
+            '<svg class="me-2" width="18" height="18"><use href="#i-magic"></use></svg>Generate Code'
+          );
+        });
+      });
+    });
+  })(window.jQuery);
+</script>
+{% endblock %}

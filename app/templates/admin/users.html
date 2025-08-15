@@ -1,0 +1,302 @@
+
+{% extends "base.html" %}
+
+{% block title %}User Management · Daved AI{% endblock %}
+
+{% block content %}
+
+<svg aria-hidden="true" class="d-none">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <circle cx="9" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M2 21a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="17" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M14 21a7 7 0 0 1 8-6" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-badge" viewBox="0 0 24 24">
+      <path d="M12 2l3 5 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24">
+      <path d="M3 12h4l2-6 4 12 2-6h6" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-more" viewBox="0 0 24 24">
+      <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+  :root{
+    --bg:#0b0f1a; --bg-soft:#0f1526; --card:#121a2d; --line:#1b2540;
+    --text:#d7e3ff; --muted:#9bb0d8; --primary:#7c4dff; --cyan:#24e1ff;
+    --grad-1:#6a00ff; --grad-2:#00e1ff; --grad-3:#8a2be2; --green:#2ecc71; --amber:#ffc107; --red:#ff6b6b;
+  }
+  body{ background: radial-gradient(1200px 600px at 10% -10%, #1a2341 0%, transparent 60%), var(--bg); color:var(--text); font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; }
+
+  .tech-grid::before{ content:""; position:absolute; inset:0; background:
+    linear-gradient(transparent 95%, rgba(255,255,255,.04) 95%) 0 0/100% 2px,
+    linear-gradient(90deg, transparent 95%, rgba(255,255,255,.04) 95%) 0 0/2px 100%; pointer-events:none; mix-blend:overlay;}
+  .scanline::after{ content:""; position:absolute; inset:0; background:linear-gradient(rgba(255,255,255,.05),rgba(255,255,255,0) 80%); opacity:.2; animation:scan 6s linear infinite; pointer-events:none;}
+  @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+  .neon{ background: linear-gradient(135deg,var(--grad-1),var(--grad-2),var(--grad-3)); background-size:200% 200%; animation:gradientMove 10s ease infinite;}
+  @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .badge-chip{ display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem; border-radius:999px; background:rgba(124,77,255,.12); border:1px solid rgba(124,77,255,.25); color:var(--muted); font-weight:600; font-size:.9rem;}
+  .btn-neon{ --bs-btn-bg:transparent; --bs-btn-border-color:rgba(124,77,255,.5); --bs-btn-color:#fff; border:1px solid var(--bs-btn-border-color); backdrop-filter:blur(6px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 0 20px rgba(124,77,255,.25); transition:transform .25s, box-shadow .25s, border-color .25s;}
+  .btn-neon:hover{ transform:translateY(-2px); border-color:var(--cyan); box-shadow:0 8px 30px rgba(36,225,255,.25);}
+  .btn-solid{ background:linear-gradient(135deg,var(--grad-1),var(--grad-2)); border:0; color:#fff; box-shadow:0 6px 30px rgba(124,77,255,.35);}
+  .btn-solid:hover{ filter:brightness(1.08); transform:translateY(-2px);}
+
+  .panel{ background: linear-gradient(180deg, rgba(255,255,255,.02),rgba(255,255,255,0)), var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; position:relative; overflow:hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s;}
+  .panel:hover{ transform:translateY(-4px); box-shadow:0 16px 60px rgba(0,0,0,.35),0 0 60px rgba(124,77,255,.15); border-color:rgba(124,77,255,.35);}
+  .panel-header{ border-bottom:1px solid rgba(255,255,255,.06); background:#0b1224; padding:.9rem 1rem;}
+  .panel-title{ margin:0; display:flex; align-items:center; gap:.6rem; font-weight:700;}
+  .ico{ width:40px; height:40px; display:grid; place-items:center; border-radius:12px; color:#fff; background:radial-gradient(circle at 30% 30%, rgba(36,225,255,.25), rgba(124,77,255,.45)); filter:url(#glow); }
+
+  .table-dark-glass{ --bs-table-bg: transparent; --bs-table-color:var(--text); }
+  .table-dark-glass td,.table-dark-glass th{ border-color: rgba(255,255,255,.06); vertical-align:middle; }
+  .table-dark-glass tbody tr{ transition: background-color .2s ease, transform .2s ease; }
+  .table-dark-glass tbody tr:hover{ background: rgba(124,77,255,.08); transform: translateY(-1px); }
+
+  .badge-soft{ border:1px solid rgba(255,255,255,.12); padding:.35rem .6rem; border-radius:999px; font-weight:600; }
+  .badge-success-soft{ background: rgba(46,204,113,.15); color:#aef0c8; border-color: rgba(46,204,113,.35); }
+  .badge-danger-soft{ background: rgba(255,107,107,.15); color:#ffb2b2; border-color: rgba(255,107,107,.35); }
+  .badge-primary-soft{ background: rgba(124,77,255,.15); color:#d9c7ff; border-color: rgba(124,77,255,.35); }
+  .badge-secondary-soft{ background: rgba(255,255,255,.08); color:#d7e3ff; }
+
+  .filter-input{ background:#0e162b; border:1px solid rgba(255,255,255,.08); color:var(--text); border-radius:12px; }
+  .filter-input:focus{ border-color: rgba(36,225,255,.6); box-shadow: 0 0 0 .25rem rgba(36,225,255,.15); background:#0f182f; }
+
+  .reveal{ opacity:0; transform: translateY(18px) scale(.98); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in-view{ opacity:1; transform: none; }
+  .tilt{ will-change: transform; }
+
+  .page-sub{ color:var(--muted); }
+  @media (max-width:575.98px){ .page-title{ font-size:1.6rem; } }
+</style>
+
+
+<section class="position-relative py-4 tech-grid scanline">
+  <div class="container position-relative">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="reveal">
+        <span class="badge-chip mb-2">
+          <svg class="me-1" width="18" height="18"><use href="#i-users"></use></svg>
+          Daved AI · Admin
+        </span>
+        <h1 class="page-title fw-800 mb-0">User Management</h1>
+        <p class="page-sub mb-0">{{ users.total }} users total</p>
+      </div>
+      <div class="reveal">
+        <a href="{{ url_for('admin.admin_activities') }}" class="btn btn-neon rounded-pill">
+          <svg class="me-2" width="18" height="18"><use href="#i-activity"></use></svg> Activity Log
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="py-3 py-md-4">
+  <div class="container">
+    <div class="panel reveal tilt">
+      <div class="panel-header">
+        <h5 class="panel-title">
+          <span class="ico"><svg width="22" height="22"><use href="#i-users"></use></svg></span>
+          All Users
+        </h5>
+      </div>
+
+      <div class="p-3 p-md-4">
+        
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-0">
+                <svg width="18" height="18"><use href="#i-search"></use></svg>
+              </span>
+              <input type="search" id="user-search" class="form-control filter-input" placeholder="Search by username or email…">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select id="role-filter" class="form-select filter-input">
+              <option value="">All roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select id="status-filter" class="form-select filter-input">
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark-glass align-middle" id="users-table">
+            <thead>
+              <tr>
+                <th class="text-uppercase small" style="color:var(--muted)">ID</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Username</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Email</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Registered</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Last Login</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Status</th>
+                <th class="text-uppercase small" style="color:var(--muted)">Role</th>
+                <th class="text-end text-uppercase small" style="color:var(--muted)">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users.items %}
+              <tr data-username="{{ user.username|lower }}" data-email="{{ user.email|lower }}"
+                  data-role="{{ 'admin' if user.is_admin else 'user' }}"
+                  data-status="{{ 'active' if user.is_active else 'inactive' }}">
+                <td>{{ user.id }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="ico" style="width:32px;height:32px;border-radius:8px;"><svg width="18" height="18"><use href="#i-badge"></use></svg></span>
+                    <strong>{{ user.username }}</strong>
+                  </div>
+                </td>
+                <td class="text-break">{{ user.email }}</td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                  {% if user.last_login %}{{ user.last_login.strftime('%Y-%m-%d %H:%M') }}{% else %}<span class="page-sub">Never</span>{% endif %}
+                </td>
+                <td>
+                  {% if user.is_active %}
+                    <span class="badge-soft badge-success-soft">Active</span>
+                  {% else %}
+                    <span class="badge-soft badge-danger-soft">Inactive</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if user.is_admin %}
+                    <span class="badge-soft badge-primary-soft">Admin</span>
+                  {% else %}
+                    <span class="badge-soft badge-secondary-soft">User</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-neon dropdown-toggle rounded-pill" type="button" data-bs-toggle="dropdown">
+                      <svg width="16" height="16"><use href="#i-more"></use></svg>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                      <li>
+                        <form method="POST" action="{{ url_for('admin.toggle_admin', user_id=user.id) }}">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                          <button type="submit" class="dropdown-item">
+                            {% if user.is_admin %}
+                              <i class="bi bi-person-dash me-2"></i>Remove Admin
+                            {% else %}
+                              <i class="bi bi-person-plus me-2"></i>Make Admin
+                            {% endif %}
+                          </button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{{ url_for('admin.toggle_active', user_id=user.id) }}">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                          <button type="submit" class="dropdown-item">
+                            {% if user.is_active %}
+                              <i class="bi bi-person-x me-2"></i>Deactivate
+                            {% else %}
+                              <i class="bi bi-person-check me-2"></i>Activate
+                            {% endif %}
+                          </button>
+                        </form>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                          <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-trash me-2"></i>Delete
+                          </button>
+                        </form>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        
+        <nav class="mt-3">
+          <ul class="pagination justify-content-center">
+            {% if users.has_prev %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin.user_management', page=users.prev_num) }}">&laquo;</a>
+              </li>
+            {% endif %}
+
+            {% for page_num in users.iter_pages() %}
+              {% if page_num %}
+                <li class="page-item {% if page_num == users.page %}active{% endif %}">
+                  <a class="page-link" href="{{ url_for('admin.user_management', page=page_num) }}">{{ page_num }}</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if users.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin.user_management', page=users.next_num) }}">&raquo;</a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } }), {threshold:.15});
+  revealEls.forEach(el=>io.observe(el));
+  function tilt(el){ let rect=null; el.addEventListener('mousemove',e=>{ if(!rect) rect=el.getBoundingClientRect(); const x=(e.clientX-rect.left)/rect.width-.5; const y=(e.clientY-rect.top)/rect.height-.5; el.style.transform=`perspective(800px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*5).toFixed(2)}deg) translateY(-4px)`;}); el.addEventListener('mouseleave',()=>{ el.style.transform=""; rect=null; }); }
+  document.querySelectorAll('.tilt').forEach(tilt);
+
+  (function(){ 
+    const rows = Array.from((document.querySelector('#users-table tbody')||{}).rows||[]);
+    const q = document.getElementById('user-search');
+    const rf = document.getElementById('role-filter');
+    const sf = document.getElementById('status-filter');
+    function apply(){
+      const text=(q?.value||'').trim().toLowerCase();
+      const role=(rf?.value||'').toLowerCase();
+      const status=(sf?.value||'').toLowerCase();
+      rows.forEach(tr=>{
+        const name=tr.getAttribute('data-username')||'';
+        const email=tr.getAttribute('data-email')||'';
+        const r=tr.getAttribute('data-role')||'';
+        const s=tr.getAttribute('data-status')||'';
+        const matchesText=!text || name.includes(text) || email.includes(text);
+        const matchesRole=!role || r===role;
+        const matchesStatus=!status || s===status;
+        tr.style.display=(matchesText && matchesRole && matchesStatus)?'':'none';
+      });
+    }
+    q&&q.addEventListener('input',apply); rf&&rf.addEventListener('change',apply); sf&&sf.addEventListener('change',apply);
+  })();
+</script>
+{% endblock %}

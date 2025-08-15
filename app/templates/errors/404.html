@@ -1,0 +1,145 @@
+
+{% extends "base.html" %}
+
+{% block title %}404 · Daved AI{% endblock %}
+
+{% block content %}
+
+<svg aria-hidden="true" class="d-none">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <symbol id="i-compass" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M16 8l-3 7-7 3 3-7 7-3z" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-home" viewBox="0 0 24 24">
+      <path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+  </defs>
+</svg>
+
+<style>
+  
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+  :root{
+    --bg:#0b0f1a; --bg-soft:#0f1526; --card:#121a2d; --line:#1b2540;
+    --text:#d7e3ff; --muted:#9bb0d8; --primary:#7c4dff; --cyan:#24e1ff;
+    --grad-1:#6a00ff; --grad-2:#00e1ff; --grad-3:#8a2be2;
+  }
+
+  body{ background: radial-gradient(1200px 600px at 10% -10%, #1a2341 0%, transparent 60%), var(--bg); color:var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+
+  .tech-grid::before{
+    content:""; position:absolute; inset:0; background:
+      linear-gradient(transparent 95%, rgba(255,255,255,.04) 95%) 0 0/100% 2px,
+      linear-gradient(90deg, transparent 95%, rgba(255,255,255,.04) 95%) 0 0/2px 100%;
+    pointer-events:none; mix-blend:overlay;
+  }
+  .scanline::after{
+    content:""; position:absolute; inset:0; background:linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,0) 80%);
+    opacity:.2; animation: scan 6s linear infinite; pointer-events:none;
+  }
+  @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+
+  .neon{ background: linear-gradient(135deg, var(--grad-1), var(--grad-2), var(--grad-3)); background-size:200% 200%; animation: gradientMove 10s ease infinite; }
+  @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card);
+    border:1px solid rgba(255,255,255,.06); border-radius:18px; position:relative; overflow:hidden;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s;
+  }
+  .panel:hover{ transform: translateY(-3px); box-shadow: 0 16px 60px rgba(0,0,0,.35), 0 0 60px rgba(124,77,255,.15); border-color: rgba(124,77,255,.35); }
+
+  .badge-chip{ display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem; border-radius:999px; background: rgba(124,77,255,.12); border:1px solid rgba(124,77,255,.25); color:var(--muted); font-weight:600; font-size:.9rem; }
+
+  .btn-neon{
+    --bs-btn-bg: transparent; --bs-btn-border-color: rgba(124,77,255,.5); --bs-btn-color:#fff;
+    border:1px solid var(--bs-btn-border-color); backdrop-filter: blur(6px);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 0 20px rgba(124,77,255,.25);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .btn-neon:hover{ transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 8px 30px rgba(36,225,255,.25); }
+  .btn-solid{ background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); border:0; color:#fff; box-shadow: 0 6px 30px rgba(124,77,255,.35); }
+  .btn-solid:hover{ filter: brightness(1.08); transform: translateY(-2px); }
+
+  .ico{ width:46px; height:46px; display:grid; place-items:center; border-radius:14px; color:#fff; background: radial-gradient(circle at 30% 30%, rgba(36,225,255,.25), rgba(124,77,255,.45)); filter:url(#glow); }
+
+  .error-num{
+    font-weight: 800; line-height: .9; letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff, #b9c7ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    position: relative; display:inline-block;
+  }
+  .error-num::after{
+    content:""; position:absolute; inset:-6px; background: linear-gradient(90deg, transparent, rgba(36,225,255,.25), transparent);
+    mix-blend-mode: screen; animation: sweep 2.8s ease-in-out infinite;
+  }
+  @keyframes sweep{ 0%{transform: translateX(-120%)} 50%{transform: translateX(0%)} 100%{transform: translateX(120%)} }
+
+  .reveal{ opacity:0; transform: translateY(18px) scale(.98); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in-view{ opacity:1; transform: none; }
+
+  .page-sub{ color:var(--muted); }
+
+  @media (max-width: 575.98px){ .error-num{ font-size:4.5rem !important; } }
+</style>
+
+<section class="position-relative py-5 tech-grid scanline">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="panel p-4 p-md-5 text-center reveal">
+          <div class="d-flex justify-content-center mb-3">
+            <span class="ico me-2"><svg width="24" height="24"><use href="#i-compass"></use></svg></span>
+            <span class="badge-chip">Page Not Found</span>
+          </div>
+
+          <div class="mb-2">
+            <span class="error-num display-1" style="font-size:6rem;">404</span>
+          </div>
+
+          <h1 class="fw-800 mb-2">We couldn’t find that page.</h1>
+          <p class="page-sub mb-4">It might have been moved, renamed, or never existed. Try the homepage or search below.</p>
+
+          <div class="row g-2 justify-content-center mb-3">
+            <div class="col-md-7">
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-0">
+                  <svg width="18" height="18"><use href="#i-search"></use></svg>
+                </span>
+                
+                <input type="search" class="form-control" placeholder="Search Daved AI…" style="background:#0e162b; border:1px solid rgba(255,255,255,.08); color:var(--text); border-radius:12px;">
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-center gap-2">
+            <a href="{{ url_for('main.index') }}" class="btn btn-solid rounded-pill px-4">
+              <svg class="me-2" width="18" height="18"><use href="#i-home"></use></svg> Back to Home
+            </a>
+            <a href="{{ url_for('codegen.index') }}" class="btn btn-neon rounded-pill px-4">Generate a Project</a>
+          </div>
+
+          <div class="position-absolute top-0 start-0 w-100 h-100 neon" style="opacity:.05; pointer-events:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } }), {threshold:.15});
+  revealEls.forEach(el=>io.observe(el));
+</script>
+{% endblock %}

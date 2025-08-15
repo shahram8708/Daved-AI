@@ -1,0 +1,476 @@
+
+{% extends "base.html" %}
+
+{% block title %}Daved AI — Generate Complete Projects from a Single Prompt{% endblock %}
+
+{% block content %}
+
+<svg aria-hidden="true" class="d-none">
+  <defs>
+    
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    
+    <symbol id="i-bolt" viewBox="0 0 24 24">
+      <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="currentColor"></path>
+    </symbol>
+    <symbol id="i-zip" viewBox="0 0 24 24">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 6h-2v2h2v2h-2v2h2" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="M9 18h6" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-save" viewBox="0 0 24 24">
+      <path d="M5 3h11l3 3v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M7 3v6h10V6" stroke="currentColor" stroke-width="2" fill="none"/>
+      <rect x="8" y="13" width="8" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24">
+      <path d="M12 2l9 5-9 5-9-5 9-5z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M3 12l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M3 17l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24">
+      <path d="M14 3c3 0 7 4 7 7 0 6-7 11-7 11s-5-7-11-7c0-3 4-7 7-7 0-3 2-4 4-4z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor"/>
+      <path d="M6 18l-3 3 4-1 2-2" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-prompt" viewBox="0 0 24 24">
+      <path d="M4 5h16v14H4z" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M7 9l3 3-3 3M11 15h6" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-code" viewBox="0 0 24 24">
+      <path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 7l-2 10" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 3v12M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="M4 21h16" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-github" viewBox="0 0 24 24">
+      <path d="M12 .5A11.5 11.5 0 0 0 .5 12.3c0 5.2 3.4 9.6 8.1 11.2.6.1.8-.3.8-.6v-2
+      c-3.3.8-4-1.4-4-1.4-.5-1.2-1.1-1.6-1.1-1.6-.9-.6.1-.6.1-.6 1 .1 1.6 1 1.6 1
+      .9 1.6 2.5 1.1 3.1.9.1-.6.4-1.1.7-1.4-2.6-.3-5.4-1.3-5.4-6 0-1.3.5-2.3 1.1-3.1
+      0-.3-.4-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2
+      .5 1.6.1 2.8.1 3.1.7.8 1.1 1.8 1.1 3.1 0 4.8-2.8 5.7-5.5 6 .4.3.8 1 .8 2v3
+      c0 .3.2.7.8.6a11.9 11.9 0 0 0 8.1-11.2A11.5 11.5 0 0 0 12 .5Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M20 3 9 20M4 7l16 10" stroke="currentColor" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-link" viewBox="0 0 24 24">
+      <path d="M10 14a5 5 0 0 1 0-7l2-2a5 5 0 1 1 7 7l-2 2M14 10a5 5 0 0 1 0 7l-2 2a5 5 0 1 1-7-7l2-2" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<style>
+  
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+  :root{
+    --bg:#0b0f1a;
+    --bg-soft:#0f1526;
+    --card:#121a2d;
+    --line:#1b2540;
+    --text:#d7e3ff;
+    --muted:#9bb0d8;
+    --primary:#7c4dff; 
+    --cyan:#24e1ff;
+    --grad-1: #6a00ff;
+    --grad-2: #00e1ff;
+    --grad-3: #8a2be2;
+  }
+
+  body { background: radial-gradient(1200px 600px at 10% -10%, #1a2341 0%, transparent 60%) , var(--bg); color: var(--text); font-family: Inter,system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; }
+
+  
+  .tech-grid::before{
+    content:""; position:absolute; inset:0; background:
+      linear-gradient(transparent 95%, rgba(255,255,255,.04) 95%) 0 0/100% 2px,
+      linear-gradient(90deg, transparent 95%, rgba(255,255,255,.04) 95%) 0 0/2px 100%;
+    pointer-events:none; mix-blend:overlay;
+  }
+  .scanline::after{
+    content:""; position:absolute; inset:0; background: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0) 80%);
+    opacity:.2; animation: scan 6s linear infinite; pointer-events: none;
+  }
+  @keyframes scan{ 0%{transform: translateY(-100%);} 100%{transform: translateY(100%);} }
+
+  
+  .neon {
+    background: linear-gradient(135deg, var(--grad-1), var(--grad-2), var(--grad-3));
+    background-size: 200% 200%;
+    animation: gradientMove 10s ease infinite;
+  }
+  @keyframes gradientMove{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+  
+  .btn-neon{
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: rgba(124,77,255,.5);
+    --bs-btn-color: #fff;
+    border: 1px solid var(--bs-btn-border-color);
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 0 20px rgba(124,77,255,.25);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .btn-neon:hover{ transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 8px 30px rgba(36,225,255,.25); }
+  .btn-solid{
+    background: linear-gradient(135deg, var(--grad-1), var(--grad-2));
+    border: 0; color:#fff; box-shadow: 0 6px 30px rgba(124,77,255,.35);
+  }
+  .btn-solid:hover{ filter: brightness(1.08); transform: translateY(-2px); }
+
+  
+  .hero{ position:relative; overflow:hidden; }
+  .hero .orb{
+    position:absolute; width:520px; height:520px; border-radius: 50%;
+    filter: blur(60px) saturate(160%); opacity:.25; z-index:0;
+  }
+  .orb-1{ top:-140px; left:-120px; background: radial-gradient(circle, rgba(124,77,255,.8), transparent 60%); }
+  .orb-2{ bottom:-160px; right:-100px; background: radial-gradient(circle, rgba(36,225,255,.8), transparent 60%); }
+  .hero h1{ letter-spacing: .4px; }
+  .hero .badge-chip{
+    display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem; border-radius:999px;
+    background: rgba(124,77,255,.12); border:1px solid rgba(124,77,255,.25); color: var(--muted); font-weight:600; font-size:.9rem;
+  }
+
+  
+  .feature-card{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
+    border: 1px solid rgba(255,255,255,.06); border-radius: 16px;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card:hover{ transform: translateY(-6px); box-shadow: 0 16px 60px rgba(0,0,0,.35), 0 0 60px rgba(124,77,255,.15); border-color: rgba(124,77,255,.35); }
+  .feature-ico{
+    width:48px; height:48px; display:grid; place-items:center; border-radius:12px; color:#fff;
+    background: radial-gradient(circle at 30% 30%, rgba(36,225,255,.25), rgba(124,77,255,.45));
+    box-shadow: 0 10px 30px rgba(124,77,255,.35) inset;
+    filter:url(#glow);
+  }
+
+  
+  .mockup {
+    background: linear-gradient(160deg, rgba(124,77,255,.18), rgba(36,225,255,.18)) , #0e1528;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px; overflow: hidden; transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .mockup:hover{ transform: translateY(-4px) scale(1.01); box-shadow: 0 18px 60px rgba(0,0,0,.4); }
+  .mockup .bar{ height: 36px; background: #0b1224; border-bottom:1px solid rgba(255,255,255,.06); display:flex; gap:.45rem; align-items:center; padding:0 .75rem; }
+  .dot{ width:10px; height:10px; border-radius:999px; }
+  .dot.r{ background:#ff5f57 } .dot.y{ background:#ffbd2e } .dot.g{ background:#28c840 }
+
+  
+  .step{
+    background: var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:1.25rem;
+    position:relative; height:100%;
+  }
+  .step-number{
+    width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); color:#fff; display:grid; place-items:center; font-weight:800;
+    box-shadow: 0 10px 30px rgba(124,77,255,.4);
+  }
+  .connector{
+    height: 2px; background: linear-gradient(90deg, rgba(124,77,255,.6), rgba(36,225,255,.6)); opacity:.6;
+  }
+
+  
+  .reveal{ opacity:0; transform: translateY(18px) scale(.98); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in-view{ opacity:1; transform: none; }
+
+  
+  @media (max-width: 575.98px){
+    .hero h1{ font-size: 1.9rem; }
+  }
+</style>
+
+
+<section class="hero position-relative py-5 tech-grid scanline">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-lg-7">
+        <span class="badge-chip mb-3 reveal">
+          <svg class="me-1" width="18" height="18"><use href="#i-bolt"></use></svg>
+          Introducing <strong class="ms-1">Daved AI</strong>
+        </span>
+        <h1 class="display-5 fw-800 mb-3 reveal">Generate <span class="text-gradient neon px-2 rounded-3">Complete Projects</span> from a Single Prompt</h1>
+        <p class="lead text-secondary reveal" style="color: var(--muted); max-width: 56ch;">
+          Turn plain language into fully packaged, ready-to-run codebases. From tiny scripts to complex, enterprise-grade applications — delivered as a downloadable ZIP and saved automatically.
+        </p>
+        <div class="d-flex gap-3 mt-4 reveal">
+          <a class="btn btn-solid btn-lg rounded-pill px-4" href="{{ url_for('auth.register') }}">
+            <svg class="me-2" width="18" height="18"><use href="#i-rocket"></use></svg> Register
+          </a>
+          <a class="btn btn-neon btn-lg rounded-pill px-4" href="{{ url_for('auth.login') }}">
+            <svg class="me-2" width="18" height="18"><use href="#i-link"></use></svg> Login
+          </a>
+        </div>
+        <div class="d-flex align-items-center gap-4 mt-4 small text-secondary reveal" style="color: var(--muted);">
+          <div class="d-flex align-items-center gap-2">
+            <svg width="18" height="18"><use href="#i-download"></use></svg> ZIP outputs
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <svg width="18" height="18"><use href="#i-save"></use></svg> Auto-saved projects
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <svg width="18" height="18"><use href="#i-code"></use></svg> Prod-ready code
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="mockup reveal">
+          <div class="bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="ms-2 small" style="color: var(--muted)">daved_ai / generated / dashboard.py</span>
+          </div>
+          <pre class="m-0 p-3" style="color:#c7f0ff; white-space: pre-wrap; font-size:.9rem;">
+<code># prompt: "SaaS dashboard with user auth and billing"
+from fastapi import FastAPI
+from routers import auth, billing, analytics
+
+app = FastAPI(title="Daved AI Generated App")
+app.include_router(auth.router)
+app.include_router(billing.router)
+app.include_router(analytics.router)
+
+# Ready to run. Exported as .zip ✔</code>
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold reveal">Why builders choose Daved AI</h2>
+      <p class="text-secondary reveal" style="color: var(--muted);">Precision, speed, and full-stack delivery — not just snippets.</p>
+    </div>
+
+    <div class="row g-4">
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100 p-4 reveal">
+          <div class="feature-ico mb-3">
+            <svg width="28" height="28"><use href="#i-prompt"></use></svg>
+          </div>
+          <h5 class="mb-2">Generate any project from a single prompt</h5>
+          <p class="mb-0 text-secondary" style="color: var(--muted);">Describe what you need. Daved AI crafts the entire codebase across stacks and frameworks.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100 p-4 reveal">
+          <div class="feature-ico mb-3">
+            <svg width="28" height="28"><use href="#i-zip"></use></svg>
+          </div>
+          <h5 class="mb-2">Full project ZIP download</h5>
+          <p class="mb-0 text-secondary" style="color: var(--muted);">Receive ready-to-run projects bundled as a clean, portable ZIP package.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100 p-4 reveal">
+          <div class="feature-ico mb-3">
+            <svg width="28" height="28"><use href="#i-save"></use></svg>
+          </div>
+          <h5 class="mb-2">Automatic project saving</h5>
+          <p class="mb-0 text-secondary" style="color: var(--muted);">Every generation is saved in your workspace for versioning and re-download.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100 p-4 reveal">
+          <div class="feature-ico mb-3">
+            <svg width="28" height="28"><use href="#i-layers"></use></svg>
+          </div>
+          <h5 class="mb-2">From scripts to enterprise apps</h5>
+          <p class="mb-0 text-secondary" style="color: var(--muted);">Scale from quick utilities to sophisticated, multi-service systems with ease.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <h2 class="fw-bold reveal">What Daved AI can build</h2>
+        <p class="text-secondary reveal" style="color: var(--muted);">A peek at projects generated from simple prompts.</p>
+      </div>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-neon rounded-pill reveal">
+        <svg class="me-2" width="18" height="18"><use href="#i-rocket"></use></svg> Start Generating
+      </a>
+    </div>
+
+    <div class="row g-4">
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="mockup reveal">
+          <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="ms-2 small" style="color: var(--muted)">Next.js SaaS Starter</span></div>
+          <div class="p-3">
+            <img src="https://placehold.co/600x360/111A2D/9bb0d8?text=SaaS+Dashboard" alt="SaaS dashboard preview" class="img-fluid rounded-3">
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-secondary" style="color: var(--muted);">Auth • Billing • Analytics</small>
+              <a class="btn btn-sm btn-neon rounded-pill px-3" href="{{ url_for('auth.register') }}">Generate</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="mockup reveal">
+          <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="ms-2 small" style="color: var(--muted)">Flutter Mobile App</span></div>
+          <div class="p-3">
+            <img src="https://placehold.co/600x360/10192B/9bb0d8?text=Mobile+UI+Kit" alt="Mobile app UI preview" class="img-fluid rounded-3">
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-secondary" style="color: var(--muted);">iOS • Android • Dark Mode</small>
+              <a class="btn btn-sm btn-neon rounded-pill px-3" href="{{ url_for('auth.register') }}">Generate</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="mockup reveal">
+          <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="ms-2 small" style="color: var(--muted)">Python ETL Pipeline</span></div>
+          <div class="p-3">
+            <img src="https://placehold.co/600x360/0E1626/9bb0d8?text=Data+Pipeline" alt="ETL pipeline preview" class="img-fluid rounded-3">
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-secondary" style="color: var(--muted);">Airflow • Pandas • CI/CD</small>
+              <a class="btn btn-sm btn-neon rounded-pill px-3" href="{{ url_for('auth.register') }}">Generate</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold reveal">How it works</h2>
+      <p class="text-secondary reveal" style="color: var(--muted);">Four steps. Minutes to a complete project.</p>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+      <div class="col-md-6 col-lg-3">
+        <div class="step reveal h-100">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="step-number">1</span>
+            <strong>Describe</strong>
+          </div>
+          <p class="mb-2 text-secondary" style="color: var(--muted);">Enter a single prompt explaining your project idea and constraints.</p>
+          <div class="small text-secondary d-flex align-items-center gap-2" style="color: var(--muted);">
+            <svg width="18" height="18"><use href="#i-prompt"></use></svg> Natural language
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="step reveal h-100">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="step-number">2</span>
+            <strong>Generate</strong>
+          </div>
+          <p class="mb-2 text-secondary" style="color: var(--muted);">Daved AI plans, scaffolds, and implements a full codebase across services.</p>
+          <div class="small text-secondary d-flex align-items-center gap-2" style="color: var(--muted);">
+            <svg width="18" height="18"><use href="#i-bolt"></use></svg> Minutes, not weeks
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="step reveal h-100">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="step-number">3</span>
+            <strong>Download</strong>
+          </div>
+          <p class="mb-2 text-secondary" style="color: var(--muted);">Receive a clean ZIP with docs, env templates, and startup scripts.</p>
+          <div class="small text-secondary d-flex align-items-center gap-2" style="color: var(--muted);">
+            <svg width="18" height="18"><use href="#i-download"></use></svg> Ready-to-run
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="step reveal h-100">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="step-number">4</span>
+            <strong>Iterate</strong>
+          </div>
+          <p class="mb-2 text-secondary" style="color: var(--muted);">Tweak prompts and regenerate — your projects are saved automatically.</p>
+          <div class="small text-secondary d-flex align-items-center gap-2" style="color: var(--muted);">
+            <svg width="18" height="18"><use href="#i-save"></use></svg> Versioned history
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-none d-lg-block my-4 connector reveal"></div>
+  </div>
+</section>
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="p-4 p-md-5 rounded-4 position-relative overflow-hidden" style="background: linear-gradient(180deg, rgba(124,77,255,.15), rgba(36,225,255,.08)), var(--bg-soft); border:1px solid rgba(255,255,255,.08);">
+      <div class="position-absolute top-0 start-0 w-100 h-100 neon" style="opacity:.08;"></div>
+      <div class="position-relative d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        <div class="reveal">
+          <h3 class="mb-1">Build your next product with Daved AI</h3>
+          <p class="mb-0 text-secondary" style="color: var(--muted);">Join developers shipping production apps from a single prompt.</p>
+        </div>
+        <div class="d-flex gap-3 reveal">
+          <a class="btn btn-solid rounded-pill px-4" href="{{ url_for('auth.register') }}">Create Account</a>
+          <a class="btn btn-neon rounded-pill px-4" href="{{ url_for('auth.login') }}">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  
+  function tilt(el){
+    let rect = null;
+    function onMove(e){
+      if(!rect) rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      el.style.transform = `perspective(800px) rotateX(${(-y*6).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg) translateY(-6px)`;
+    }
+    function reset(){ el.style.transform = ""; rect = null; }
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', reset);
+  }
+  document.querySelectorAll('.feature-card, .mockup').forEach(tilt);
+</script>
+{% endblock %}
